@@ -1,57 +1,84 @@
-#funciones de crud de la db
 import threading
-import subprocess
-import multiprocessing #maybe
-
+import sqlite3
 
 class ThreadSafeDB:
-    def __init__(self):
-        self.records = []
-        self.lock = threading.RLock()
+    def __init__(self, db_name):
+        self.lock = threading.Lock() # Lock para obtener seguridad en operaciones concurrentes
+        self.conn = sqlite3.connect(db_name) # Conexion a la base de datos recientemente creada
+        self.create_tables()
 
-    def add_record(self, record):
+    def create_tables(self): # Presentacion de la base de datos 
         with self.lock:
-            self.records.append(record)
+            cursor = self.conn.cursor()
+            cursor.execute('''CREATE TABLE IF NOT EXISTS Robots (
+                                id INTEGER PRIMARY KEY,
+                                robot_type TEXT,
+                                identification TEXT,
+                                power_state TEXT,
+                                location TEXT,
+                                siren_count INTEGER
+                            )''')
+            cursor.execute('''CREATE TABLE IF NOT EXISTS LogEventos (
+                                id INTEGER PRIMARY KEY,
+                                event_type TEXT,
+                                description TEXT,
+                                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+                            )''')
+            cursor.execute('''CREATE TABLE IF NOT EXISTS EstadoPrograma (
+                                id INTEGER PRIMARY KEY,
+                                program_state TEXT
+                            )''')
+            cursor.execute('''CREATE TABLE IF NOT EXISTS VariablesEstaticas (
+                                id INTEGER PRIMARY KEY,
+                                variable_name TEXT,
+                                value TEXT
+                            )''')
+            self.conn.commit()
 
-    def list_records(self):
-        with self.lock:
-            return self.records.copy()
+    def add_robot(self, robot_data):
+        with self.lock: #Seguridad
+            cursor = self.conn.cursor()
+            cursor.execute('''INSERT INTO Robots 
+                              (robot_type, identification, power_state, location, siren_count) 
+                              VALUES (?, ?, ?, ?, ?)''', robot_data)
+            self.conn.commit()
 
-    def update_record(self, record_id, new_record):
+    def list_robots(self):
         with self.lock:
-            self.records[record_id] = new_record
+            cursor = self.conn.cursor()
+            cursor.execute('''SELECT * FROM Robots''')
+            return cursor.fetchall()
 
-    def delete_record(self, record_id):
+    def update_robot(self, robot_id, new_robot_data):
         with self.lock:
-            del self.records[record_id]
+            cursor = self.conn.cursor()
+            cursor.execute('''UPDATE Robots 
+                              SET robot_type=?, identification=?, power_state=?, location=?, siren_count=? 
+                              WHERE id=?''', (*new_robot_data, robot_id))
+            self.conn.commit()
+
+    def delete_robot(self, robot_id):
+        with self.lock:
+            cursor = self.conn.cursor()
+            cursor.execute('''DELETE FROM Robots WHERE id=?''', (robot_id,))
+            self.conn.commit()
 
     def save_to_file(self, filename):
         with self.lock:
             with open(filename, 'w') as f:
-                for record in self.records:
+                cursor = self.conn.cursor()
+                cursor.execute('''SELECT * FROM Robots''')
+                for record in cursor.fetchall():
                     f.write(','.join(map(str, record)) + '\n')
 
-'''
-#Como adquirir los strings de la consola de karelRobot? puede ser con subproces.pip pero no se ajaj.
-import subprocess
-
-# Define the command and parameters you want to run
-cmd = ['your_program', 'arg1', 'arg2']
-
-# Start the process and capture its output
-process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-
-# Read the output line by line
-while True:
-    output = process.stdout.readline()
-    if output == '' and process.poll() is not None:
-        break
-    if output:
-        print(output.strip())  # Process or display the output
-
-# Check for any errors
-err = process.stderr.read()
-if err:
-    print("Error:", err)
-
-'''
+# Ejemplossssssss
+if __name__ == "__main__":
+    db = ThreadSafeDB('robots_database.db')
+    db.add_robot(('Minero', 'DRN001', 'On', 'Warehouse A', 2))
+    db.add_robot(('Extractor', 'RB002', 'Off', 'Factory B', 0))
+    print(db.list_robots())
+    db.update_robot(1, ('Minero', 'DRN001', 'Off', 'Warehouse B', 3))
+    print(db.list_robots())
+    db.delete_robot(1)
+    print(db.list_robots())
+    db.save_to_file('robots_data.csv')
