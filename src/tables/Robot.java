@@ -4,12 +4,14 @@ public class Robot {
     private int robotId; // Numeric (Number greater than 1)
     private int robotType; // Numeric (1, 2, or 3)
     private boolean isTurnedOn; // Boolean (True/False)
-
+    //Robot Attributes
+    
     // Constructor
     public Robot(int robotId, int robotType, boolean isTurnedOn) {
         this.robotId = robotId;
         this.robotType = robotType;
         this.isTurnedOn = isTurnedOn;
+        
     }
 
     //Getters

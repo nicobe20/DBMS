@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock; 
 
 import database.CSVLogEventHandler;
 import database.CSVProgramStatusHandler;
@@ -13,6 +14,9 @@ import tables.Robot;
 import tables.StaticVariables;
 
 public class Main {
+    //Global lock instance
+    private static final ReentrantLock lock = new ReentrantLock();
+
     public static void main(String[] args) {
 
         // // Guardar robot
@@ -108,5 +112,38 @@ public class Main {
         // System.err.println("Error al guardar las variables estáticas: " +
         // e.getMessage());
         // }
+        // -------------------------------------------------------------------------
+        // Concurrency and locks 
+        // Crear una instancia de CSVHandler para manejar la escritura y lectura en archivo expanded code in section 1.
+
+
+        CSVRobotHandler csvRobotHandler = new CSVRobotHandler();
+        // Guardar robot
+        Robot newRobot = new Robot(10, 2, true);
+
+        // Intentar guardar la lista de robots en el archivo CSV
+        try {
+            lock.lock();
+            csvRobotHandler.saveRobot(newRobot);
+            //System.out.println("Robot guardado exitosamente en el archivo CSV.");
+        } catch (IOException e) {
+            System.err.println("Error al guardar robots en el archivo CSV: " + e.getMessage());
+        } finally {
+            lock.unlock();
+        }
+        // Obtener robots
+        try {
+            lock.lock();
+            List<Robot> robots = csvRobotHandler.loadRobots();
+            System.out.println("Robots cargados exitosamente desde el archivo CSV:");
+            for (Robot robot : robots) {
+                System.out.println("ID: " + robot.getRobotId() + ", Tipo: " + robot.getRobotType() + ", Encendido: " + robot.isTurnedOn());
+            }
+        } catch (IOException e) {
+            System.err.println("Error al cargar robots desde el archivo CSV: " + e.getMessage());
+        } finally {
+            lock.unlock();
+        }
+    
     }
 }

@@ -7,16 +7,19 @@ import java.util.List;
 import tables.Robot;
 
 public class CSVRobotHandler {
-    private static final String FILENAME = "robots.csv";
+    private static final String FILENAME = "DataTables/robots.csv";
 
     public void saveRobot(Robot robot) throws IOException {
+        
+        File file = new File(FILENAME);
+        file.getParentFile().mkdirs(); 
+        //FileWriter set true para no sobreescribir los archivos.
         FileWriter fileWriter = new FileWriter(FILENAME, true);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
         String line = robot.getRobotId() + "," + robot.getRobotType() + "," + robot.isTurnedOn();
         bufferedWriter.write(line);
         bufferedWriter.newLine();
-
         bufferedWriter.close();
     }
 
