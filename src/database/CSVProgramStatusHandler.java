@@ -8,15 +8,13 @@ import java.time.format.DateTimeFormatter;
 import tables.ProgramStatus;
 
 public class CSVProgramStatusHandler {
-    private static final String FILENAME = "DataTables/programStatus.csv";
+    private static final String FILENAME = "programStatus.csv";
 
     public void saveProgramStatus(ProgramStatus programStatus) throws IOException {
         // Configura el formato de la fecha y hora
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        File file = new File(FILENAME);
-        file.getParentFile().mkdirs();
-        //FileWriter set true para no sobreescribir los archivos.
+        // Abre el archivo en modo append para no sobrescribir los datos existentes
         FileWriter fileWriter = new FileWriter(FILENAME, true);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 

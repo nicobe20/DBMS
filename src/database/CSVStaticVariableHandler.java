@@ -8,16 +8,13 @@ import java.time.format.DateTimeFormatter;
 import tables.StaticVariables;
 
 public class CSVStaticVariableHandler {
-    private static final String FILENAME = "DataTables/staticVariables.csv";
+    private static final String FILENAME = "staticVariables.csv";
 
     public void saveStaticVariable(StaticVariables variable) throws IOException {
         // Configura el formato de la fecha y hora
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        File file = new File(FILENAME);
-        file.getParentFile().mkdirs();
-
-        //FileWriter set true para no sobreescribir los archivos.
+        // Abre el archivo en modo append para no sobrescribir los datos existentes
         FileWriter fileWriter = new FileWriter(FILENAME, true);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
