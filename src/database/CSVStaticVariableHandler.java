@@ -18,11 +18,11 @@ public class CSVStaticVariableHandler {
         FileWriter fileWriter = new FileWriter(FILENAME, true);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
-        // Formatea los datos de las variables estáticas en una línea de texto CSV
+        // Formatea los datos de las variables estaticas en una linea de texto CSV
         String line = variable.getTimeStamp().format(formatter) + "," +
-                variable.getVariables(); // Asegúrate de que las variables están en un formato adecuado para CSV
+                variable.getVariables(); // Asegurate de que las variables estan en un formato adecuado para CSV
 
-        // Escribe la línea en el archivo CSV y cierra el archivo
+        // Escribe la linea en el archivo CSV y cierra el archivo
         bufferedWriter.write(line);
         bufferedWriter.newLine();
         bufferedWriter.close();

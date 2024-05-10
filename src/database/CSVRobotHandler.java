@@ -1,8 +1,6 @@
 package database;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import tables.Robot;
 
@@ -12,6 +10,15 @@ public class CSVRobotHandler {
         FileWriter fileWriter = new FileWriter(tableName, true);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
+        // Verificar si el archivo esta vacio
+        File file = new File(tableName);
+        if (file.length() == 0) {
+            // Si el archivo esta vacio, escribir los nombres de los campos como encabezados
+            bufferedWriter.write("robotId,robotType,isTurnedOn");
+            bufferedWriter.newLine();
+        }
+
+        // Escribir la informacion del robot en el archivo
         String line = robot.getRobotId() + "," + robot.getRobotType() + "," + robot.isTurnedOn();
         bufferedWriter.write(line);
         bufferedWriter.newLine();
@@ -19,20 +26,4 @@ public class CSVRobotHandler {
         bufferedWriter.close();
     }
 
-    // public List<Robot> loadRobots() throws IOException {
-    //     List<Robot> robots = new ArrayList<>();
-    //     FileReader fileReader = new FileReader(FILENAME);
-    //     BufferedReader bufferedReader = new BufferedReader(fileReader);
-    //     String line;
-    //     while ((line = bufferedReader.readLine()) != null) {
-    //         String[] data = line.split(",");
-    //         int robotId = Integer.parseInt(data[0]);
-    //         int robotType = Integer.parseInt(data[1]);
-    //         boolean isTurnedOn = Boolean.parseBoolean(data[2]);
-    //         Robot robot = new Robot(robotId, robotType, isTurnedOn);
-    //         robots.add(robot);
-    //     }
-    //     bufferedReader.close();
-    //     return robots;
-    // }
 }

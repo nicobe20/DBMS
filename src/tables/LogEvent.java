@@ -19,8 +19,6 @@ public class LogEvent {
     }
 
     // Getters
-
-
     public int getRobotId() {
         return robotId;
     }

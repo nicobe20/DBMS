@@ -1,14 +1,13 @@
 package tables;
 
 public class Robot {
-    private static int lastRobotId = 0;
     private int robotId;
     private int robotType; 
     private boolean isTurnedOn;
 
     // Constructor
     public Robot(int robotId, int robotType, boolean isTurnedOn) {
-        this.robotId = ++lastRobotId -1;
+        this.robotId = robotId;
         this.robotType = robotType;
         this.isTurnedOn = isTurnedOn;
     }

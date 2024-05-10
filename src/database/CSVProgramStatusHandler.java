@@ -18,11 +18,11 @@ public class CSVProgramStatusHandler {
         FileWriter fileWriter = new FileWriter(FILENAME, true);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
-        // Formatea los datos del estado del programa en una línea de texto CSV
+        // Formatea los datos del estado del programa en una linea de texto CSV
         String line = programStatus.getTimeStamp().format(formatter) + "," +
                 programStatus.getState();
 
-        // Escribe la línea en el archivo CSV y cierra el archivo
+        // Escribe la linea en el archivo CSV y cierra el archivo
         bufferedWriter.write(line);
         bufferedWriter.newLine();
         bufferedWriter.close();
