@@ -1,11 +1,9 @@
 package database;
 
 import java.io.*;
-
 import tables.Robot;
 
 public class CSVRobotHandler {
-
     public void saveRobot(Robot robot, String tableName) throws IOException {
         FileWriter fileWriter = new FileWriter(tableName, true);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
@@ -14,7 +12,7 @@ public class CSVRobotHandler {
         File file = new File(tableName);
         if (file.length() == 0) {
             // Si el archivo esta vacio, escribir los nombres de los campos como encabezados
-            bufferedWriter.write("robotId,robotType,isTurnedOn,color, robotTypeString");
+            bufferedWriter.write("robotId,robotType,isTurnedOn,color,robotTypeString");
             bufferedWriter.newLine();
         }
 

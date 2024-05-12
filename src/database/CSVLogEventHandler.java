@@ -14,7 +14,7 @@ public class CSVLogEventHandler {
 
     private final Lock logEventLock = new ReentrantLock();
 
-    public void saveEvent(LogEvent event, String tableName) throws IOException {
+    public void saveLogEvent(LogEvent event, String tableName) throws IOException {
         logEventLock.lock();
         try {
             // Configurar el formato de la fecha y hora

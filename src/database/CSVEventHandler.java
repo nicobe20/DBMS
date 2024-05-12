@@ -20,7 +20,7 @@ public class CSVEventHandler {
 
     private final Lock eventLock = new ReentrantLock();
 
-    public void saveAndUpdateEvent(LogEvent event, String tableName) throws IOException {
+    public void saveEvent(LogEvent event, String tableName) throws IOException {
         eventLock.lock();
         try {
             // Verificar si el archivo CSV existe
@@ -28,18 +28,46 @@ public class CSVEventHandler {
             if (!file.exists()) {
                 // Si el archivo no existe, crear uno nuevo
                 createNewCSVFile(tableName);
+            } else {
+                // Si el archivo existe, verificar si está vacío
+                if (file.length() == 0) {
+                    // Si el archivo está vacío, escribir la línea requerida en la primera línea
+                    try {
+                        FileWriter writer = new FileWriter(file);
+                        writer.write("robotId,timestamp,avenue,street,sirens\n");
+                        writer.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
 
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            int robotId = event.getRobotId();
+
+            // El robotId no existe, crea una nueva entrada en el archivo CSV
+            String newLine = robotId + "," +
+                    event.getTimeStamp().format(formatter) + "," +
+                    event.getAvenue() + "," +
+                    event.getStreet() + "," +
+                    event.getSirens();
+            appendLineToFile(tableName, newLine);
+        } finally {
+            eventLock.unlock();
+        }
+    }
+
+    public void updateEvent(LogEvent event, String tableName) throws IOException {
+        eventLock.lock();
+        try {
             // Configurar el formato de la fecha y hora
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
             // Leer el archivo CSV y cargar los datos en un mapa para facilitar la busqueda
             Map<Integer, List<String>> dataMap = readDataFromFile(tableName);
-
             // Obtener el robotId del evento
             int robotId = event.getRobotId();
 
-            // Verificar si el robotId ya existe en el archivo CSV
             if (dataMap.containsKey(robotId)) {
                 // El robotId ya existe, actualiza los datos correspondientes
                 List<String> rowData = dataMap.get(robotId);
@@ -50,18 +78,12 @@ public class CSVEventHandler {
 
                 // Escribir la linea actualizada en el archivo CSV
                 writeDataToFile(tableName, dataMap);
-            } else {
-                // El robotId no existe, crea una nueva entrada en el archivo CSV
-                String newLine = robotId + "," +
-                        event.getTimeStamp().format(formatter) + "," +
-                        event.getAvenue() + "," +
-                        event.getStreet() + "," +
-                        event.getSirens();
-                appendLineToFile(tableName, newLine);
             }
+
         } finally {
             eventLock.unlock();
         }
+
     }
 
     // Metodo para escribir los datos actualizados en el archivo CSV
