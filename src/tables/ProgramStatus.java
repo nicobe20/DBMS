@@ -4,12 +4,12 @@ import java.time.LocalDateTime;
 
 public class ProgramStatus {
     private LocalDateTime timeStamp;
-    private int state;
+    private String programStatus;
 
     // Constructor
-    public ProgramStatus(LocalDateTime timeStamp, int state) {
+    public ProgramStatus(LocalDateTime timeStamp, String programStatus) {
         this.timeStamp = timeStamp;
-        this.state = state;
+        this.programStatus = programStatus;
     }
 
     // Getters
@@ -17,8 +17,8 @@ public class ProgramStatus {
         return timeStamp;
     }
 
-    public int getState() {
-        return state;
+    public String getState() {
+        return programStatus;
     }
 
     // Setters

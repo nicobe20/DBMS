@@ -8,21 +8,20 @@ import java.time.format.DateTimeFormatter;
 import tables.ProgramStatus;
 
 public class CSVProgramStatusHandler {
-    private static final String FILENAME = "programStatus.csv";
 
-    public void saveProgramStatus(ProgramStatus programStatus) throws IOException {
-        // Configura el formato de la fecha y hora
+    public void saveProgramStatus(ProgramStatus programStatus, String tableName) throws IOException {
+        // Configurar el formato de la fecha y hora
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        // Abre el archivo en modo append para no sobrescribir los datos existentes
-        FileWriter fileWriter = new FileWriter(FILENAME, true);
+        // Abrir el archivo en modo append para no sobrescribir los datos existentes
+        FileWriter fileWriter = new FileWriter(tableName, true);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
-        // Formatea los datos del estado del programa en una linea de texto CSV
+        // Formatear los datos del estado del programa en una linea de texto CSV
         String line = programStatus.getTimeStamp().format(formatter) + "," +
                 programStatus.getState();
 
-        // Escribe la linea en el archivo CSV y cierra el archivo
+        // Escribir la linea en el archivo CSV y cierra el archivo
         bufferedWriter.write(line);
         bufferedWriter.newLine();
         bufferedWriter.close();

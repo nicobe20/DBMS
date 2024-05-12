@@ -6,11 +6,11 @@ public class Main {
 
     public static void main(String[] args) {
 
-        CleanTable cleanRobotTable = new CleanTable();
-        cleanRobotTable.cleanTable(Constants.DEFAULT_ROBOT_TABLE_NAME);
+        CleanTable cleanTable = new CleanTable();
 
-        CleanTable cleanEventTable = new CleanTable();
-        cleanEventTable.cleanTable(Constants.DEFAULT_EVENT_TABLE_NAME);
+        cleanTable.cleanTable(Constants.DEFAULT_ROBOT_TABLE_NAME);
+        cleanTable.cleanTable(Constants.DEFAULT_EVENT_TABLE_NAME);
+        cleanTable.cleanTable(Constants.DEFAULT_LOG_EVENT_TABLE_NAME);
 
         DbServer dbServer = new DbServer(12345);
         dbServer.start();

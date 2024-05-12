@@ -8,9 +8,11 @@ import org.json.JSONObject;
 
 import constants.Constants;
 import tables.LogEvent;
+import tables.ProgramStatus;
 import tables.Robot;
 import database.CSVEventHandler;
 import database.CSVLogEventHandler;
+import database.CSVProgramStatusHandler;
 import database.CSVRobotHandler;
 import utils.GenerateId;
 
@@ -31,7 +33,6 @@ public class DbServer {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
 
-                // Iniciar un hilo para manejar la conexion con el cliente
                 Thread clientThread = new Thread(() -> handleClient(clientSocket));
                 clientThread.start();
             }
@@ -46,7 +47,7 @@ public class DbServer {
 
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
-                // ("DBServer: Received message from client: " + inputLine);
+                //System.out.println("DBServer: Received message from client: " + inputLine);
 
                 // Convert received JSON string to JSON object
                 JSONObject jsonObject = new JSONObject(inputLine);
@@ -54,13 +55,14 @@ public class DbServer {
                 // Get the values ​​of the JSONObject object
                 String tableName = jsonObject.getString("tableName");
 
-                // Por que no esta entrando a estos condicionales?
                 if (tableName.equals(Constants.DEFAULT_ROBOT_TABLE_NAME)) {
                     handleRobotQueries(jsonObject, tableName);
                 } else if (tableName.equals(Constants.DEFAULT_LOG_EVENT_TABLE_NAME)) {
                     handleLogEventsQueries(jsonObject, tableName);
                 } else if (tableName.equals(Constants.DEFAULT_EVENT_TABLE_NAME)) {
                     handleEventsQueries(jsonObject, tableName);
+                } else if (tableName.equals(Constants.DEFAULT_PROGRAM_STATUS_TABLE_NAME)) {
+                    handleProgramStatus(jsonObject, tableName);
                 }
 
             }
@@ -74,12 +76,14 @@ public class DbServer {
         // int robotId = jsonObject.getInt("robotId");
         int robotType = jsonObject.getInt("robotType");
         boolean isTurnedOn = jsonObject.getBoolean("isTurnedOn");
+        String color = jsonObject.getString("color");
+        String robotTypeString = jsonObject.getString("robotTypeString");
 
         // Get next id
         int nextRobotId = GenerateId.getLastId(Constants.DEFAULT_ROBOT_TABLE_NAME) + 1;
 
         // Create instance of Roboy and CSVRobotHandler
-        Robot nuevoRobot = new Robot(nextRobotId, robotType, isTurnedOn);
+        Robot nuevoRobot = new Robot(nextRobotId, robotType, isTurnedOn, color, robotTypeString);
         CSVRobotHandler CSVRobotHandler = new CSVRobotHandler();
 
         try {
@@ -97,7 +101,7 @@ public class DbServer {
         int street = jsonObject.getInt("street");
         int sirens = jsonObject.getInt("sirens");
 
-        // Create instance of Roboy and CSVRobotHandler
+        // Create instance of LogEvent and CSVRobotHandler
         LogEvent newLogEvent = new LogEvent(robotId, LocalDateTime.now(), avenue, street, sirens);
         CSVLogEventHandler CSVLogEventHandler = new CSVLogEventHandler();
 
@@ -116,12 +120,26 @@ public class DbServer {
         int street = jsonObject.getInt("street");
         int sirens = jsonObject.getInt("sirens");
 
-        // Create instance of Roboy and CSVRobotHandler
+        // Create instance of LogEvent and CSVRobotHandler
         LogEvent newLogEvent = new LogEvent(robotId, LocalDateTime.now(), avenue, street, sirens);
         CSVEventHandler CSVEventHandler = new CSVEventHandler();
         try {
             CSVEventHandler.saveAndUpdateEvent(newLogEvent, tableName);
             // System.out.println("Event successfully saved to CSV file.");
+        } catch (IOException e) {
+            System.out.println("Error saving robot: " + e.getMessage());
+        }
+    }
+
+    public void handleProgramStatus(JSONObject jsonObject, String tableName) {
+        String programStatus = jsonObject.getString("programStatus");
+
+        // Create instance of ProgramStatus and CSVRobotHandler
+        ProgramStatus newState = new ProgramStatus(LocalDateTime.now(), programStatus);
+        CSVProgramStatusHandler CSVProgramStatusHandler = new CSVProgramStatusHandler();
+        try {
+            CSVProgramStatusHandler.saveProgramStatus(newState, tableName);
+            // System.out.println("State successfully saved to CSV file.");
         } catch (IOException e) {
             System.out.println("Error saving robot: " + e.getMessage());
         }

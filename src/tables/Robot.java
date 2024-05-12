@@ -2,17 +2,22 @@ package tables;
 
 public class Robot {
     private int robotId;
-    private int robotType; 
+    private int robotType;
     private boolean isTurnedOn;
+    private String color;
+    private String robotTypeString;
+    
 
     // Constructor
-    public Robot(int robotId, int robotType, boolean isTurnedOn) {
+    public Robot(int robotId, int robotType, boolean isTurnedOn, String color, String robotTypeString) {
         this.robotId = robotId;
         this.robotType = robotType;
         this.isTurnedOn = isTurnedOn;
+        this.color = color;
+        this.robotTypeString = robotTypeString;
     }
 
-    //Getters
+    // Getters
     public int getRobotId() {
         return robotId;
     }
@@ -25,13 +30,20 @@ public class Robot {
         return isTurnedOn;
     }
 
-    //Setters
+    public String getColor() {
+        return color;
+    }
+    
+    public String getRobotTypeString() {
+        return robotTypeString;
+    }
+
+    // Setters
     // public void setRobotType(int robotType) {
-    //     this.robotType = robotType;
+    // this.robotType = robotType;
     // }
 
-
     // public void setTurnedOn(boolean isTurnedOn) {
-    //     this.isTurnedOn = isTurnedOn;
+    // this.isTurnedOn = isTurnedOn;
     // }
 }

@@ -109,22 +109,6 @@ public class Minero extends AugmentedRobot implements Directions {
 
 	// Runnable method that starts the thread
 	public void run() {
-		// try {
-		// Socket socket = new Socket("localhost", 12345);
-		// PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-
-		// String jsonRobot = "{"
-		// + "\"tableName\":" + ROBOT_TABLE + ","
-		// + "\"robotType\":"+ objRobots +","
-		// + "\"isTurnedOn\":true" + ","
-		// + "}";
-
-		// // Send JSON string to the server
-		// out.println(jsonRobot);
-
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
 		ejecutarMina();
 	}
 
@@ -158,7 +142,6 @@ public class Minero extends AugmentedRobot implements Directions {
 		int nuevaCalle = determineNuevaCalle();
 		int nuevaAvenida = determineNuevaAvenida();
 		String posicion = Integer.toString(nuevaCalle) + " - " + Integer.toString(nuevaAvenida);
-		generateEventLogs();
 
 		// Critical area: Check if the position is occupated. If find it in the
 		// objPosiciones, the position it tries to get is occupated, so it gets locked
@@ -177,6 +160,10 @@ public class Minero extends AugmentedRobot implements Directions {
 			objPosiciones.retirarPosicion(posicion);
 			calleActual = nuevaCalle;
 			avenidaActual = nuevaAvenida;
+
+			generateEventLogs();
+			generateEvent();
+
 		} catch (InterruptedException exc) {
 			System.out.println(exc);
 		}
@@ -186,27 +173,55 @@ public class Minero extends AugmentedRobot implements Directions {
 		// Fin Seccion critica
 	}
 
-	private void generateEventLogs() {
+	private void connectionWithDbServer(String jsonMessage) {
 		try {
 			Socket socket = new Socket("localhost", 12345);
 			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
-			String jsonRobot = "{"
-					// + "\"tableName\":" + LOG_EVENT_TABLE + ","
-					+ "\"tableName\":" + EVENT_TABLE + ","
-					+ "\"robotId\":" + id + ","
-					+ "\"avenue\":" + avenidaActual + ","
-					+ "\"street\":" + calleActual + ","
-					+ "\"sirens\":" + currentBeeps + ","
-					+ "}";
-
-			// Send JSON string to the server
-			out.println(jsonRobot);
+			// Message for dbServer
+			out.println(jsonMessage);
 
 			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void generateProgramStatus(String programStatus) {
+		String jsonRobot = "{"
+				+ "\"tableName\":\"" + PROGRAM_STATUS_TABLE + "\","
+				+ "\"programStatus\":" + programStatus + ","
+				+ "}";
+
+		connectionWithDbServer(jsonRobot);
+	}
+
+	private void generateEventLogs() {
+
+		String jsonRobot = "{"
+				+ "\"tableName\":\"" + LOG_EVENT_TABLE + "\","
+				+ "\"robotId\":" + id + ","
+				+ "\"avenue\":" + avenidaActual + ","
+				+ "\"street\":" + calleActual + ","
+				+ "\"sirens\":" + currentBeeps
+				+ "}";
+
+		connectionWithDbServer(jsonRobot);
+
+	}
+
+	private void generateEvent() {
+
+		String jsonRobot = "{"
+				+ "\"tableName\":\"" + EVENT_TABLE + "\","
+				+ "\"robotId\":" + id + ","
+				+ "\"avenue\":" + avenidaActual + ","
+				+ "\"street\":" + calleActual + ","
+				+ "\"sirens\":" + currentBeeps
+				+ "}";
+
+		connectionWithDbServer(jsonRobot);
+
 	}
 
 	// Movement inside the mine. No locking because there's a lock in the vein
@@ -216,8 +231,12 @@ public class Minero extends AugmentedRobot implements Directions {
 		int nuevaAvenida = determineNuevaAvenida();
 		ejecutarLog = (debugHabilitado) ? logMensaje("Me muevo en la mina") : false;
 		move();
+
 		calleActual = nuevaCalle;
 		avenidaActual = nuevaAvenida;
+
+		generateEventLogs();
+		generateEvent();
 	}
 
 	// ------------------------------------------------------------------------------------------------------------------------------------------------------------//
@@ -444,7 +463,7 @@ public class Minero extends AugmentedRobot implements Directions {
 		while (anyBeepersInBeeperBag()) {
 			putBeeper();
 			currentBeeps--;
-			generateEventLogs();
+			generateEvent();
 			arr_bodegas[bodegaEnUso]++;
 			if (arr_bodegas[bodegaEnUso] == BEEPERS_POR_BODEGA) {
 				bodegaEnUso++;
@@ -498,7 +517,7 @@ public class Minero extends AugmentedRobot implements Directions {
 		while (nextToABeeper() && beepers < BEEPERS_EXTRACTOR) {
 			pickBeeper();
 			currentBeeps++;
-			generateEventLogs();
+			generateEvent();
 			beepers++;
 		}
 		// If vein is empty and already put all beepers on the Warehouse, release and
@@ -525,7 +544,7 @@ public class Minero extends AugmentedRobot implements Directions {
 			pickBeeper();
 			beepers++;
 			currentBeeps++;
-			generateEventLogs();
+			generateEvent();
 			beepersExtraidos--;
 		}
 		// Go to the delivery point
@@ -544,7 +563,7 @@ public class Minero extends AugmentedRobot implements Directions {
 		for (int i = beepers; i > 0; i--) {
 			putBeeper();
 			currentBeeps--;
-			generateEventLogs();
+			generateEvent();
 		}
 		// ... and goes back to the vein delivery point
 		turnLeft();
@@ -696,7 +715,7 @@ public class Minero extends AugmentedRobot implements Directions {
 			if (nextToABeeper()) {
 				pickBeeper();
 				currentBeeps++;
-				generateEventLogs();
+				generateEvent();
 				i++;
 			} else {
 				if (!frontIsClear())
@@ -714,7 +733,7 @@ public class Minero extends AugmentedRobot implements Directions {
 			putBeeper();
 			beepersExtraidos++;
 			currentBeeps--;
-			generateEventLogs();
+			generateEvent();
 		}
 		ejecutarLog = (debugHabilitado)
 				? logMensaje("Termine descarga. Si hay mas de " + BEEPERS_TREN
@@ -817,6 +836,8 @@ public class Minero extends AugmentedRobot implements Directions {
 	// Create the robots in the World due to the type
 	public static void crearRobots(int tipoRobot) {
 		Color colorRobot = Color.WHITE;
+		String robotColorString = "";
+		String robotTypeString = "";
 		int calle = 0;
 		int cantidad = 0;
 		Minero robot;
@@ -826,19 +847,25 @@ public class Minero extends AugmentedRobot implements Directions {
 			case TIPO_MINERO:
 				calle = CALLE_MINERO;
 				colorRobot = Color.BLACK;
+				robotColorString = "BLACK";
+				robotTypeString = "MINERO";
 				cantidad = cantidadMineros;
 				break;
+
 			case TIPO_TREN:
 				calle = CALLE_TREN;
 				colorRobot = Color.BLUE;
+				robotColorString = "BLUE";
+				robotTypeString = "TREN";
 				cantidad = cantidadTrenes;
-
 				break;
+
 			case TIPO_EXTRACTOR:
 				calle = CALLE_EXTRACTOR;
 				colorRobot = Color.RED;
+				robotColorString = "RED";
+				robotTypeString = "EXTRACTOR";
 				cantidad = cantidadExtractores;
-
 				break;
 		}
 
@@ -858,6 +885,8 @@ public class Minero extends AugmentedRobot implements Directions {
 						+ "\"tableName\":" + ROBOT_TABLE + ","
 						+ "\"robotType\":" + tipoRobot + ","
 						+ "\"isTurnedOn\":true" + ","
+						+ "\"color\":" + robotColorString + ","
+						+ "\"robotTypeString\":" + robotTypeString + ","
 						+ "}";
 
 				// Send JSON string to the server
@@ -953,7 +982,7 @@ public class Minero extends AugmentedRobot implements Directions {
 	// Setup Karel World
 	private static void setupWorld(String mundo) {
 		World.readWorld(mundo);
-		World.setDelay(20);
+		World.setDelay(15);
 		World.setVisible(true);
 	}
 

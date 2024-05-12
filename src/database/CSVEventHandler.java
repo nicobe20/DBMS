@@ -11,48 +11,56 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import tables.LogEvent;
 
 public class CSVEventHandler {
 
+    private final Lock eventLock = new ReentrantLock();
 
     public void saveAndUpdateEvent(LogEvent event, String tableName) throws IOException {
-        // Verificar si el archivo CSV existe
-        File file = new File(tableName);
-        if (!file.exists()) {
-            // Si el archivo no existe, crear uno nuevo
-            createNewCSVFile(tableName);
-        }
+        eventLock.lock();
+        try {
+            // Verificar si el archivo CSV existe
+            File file = new File(tableName);
+            if (!file.exists()) {
+                // Si el archivo no existe, crear uno nuevo
+                createNewCSVFile(tableName);
+            }
 
-        // Configurar el formato de la fecha y hora
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            // Configurar el formato de la fecha y hora
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        // Leer el archivo CSV y cargar los datos en un mapa para facilitar la busqueda
-        Map<Integer, List<String>> dataMap = readDataFromFile(tableName);
+            // Leer el archivo CSV y cargar los datos en un mapa para facilitar la busqueda
+            Map<Integer, List<String>> dataMap = readDataFromFile(tableName);
 
-        // Obtener el robotId del evento
-        int robotId = event.getRobotId();
+            // Obtener el robotId del evento
+            int robotId = event.getRobotId();
 
-        // Verificar si el robotId ya existe en el archivo CSV
-        if (dataMap.containsKey(robotId)) {
-            // El robotId ya existe, actualiza los datos correspondientes
-            List<String> rowData = dataMap.get(robotId);
-            rowData.set(1, event.getTimeStamp().format(formatter)); // Update timestamp
-            rowData.set(2, Integer.toString(event.getAvenue())); // Update avenue
-            rowData.set(3, Integer.toString(event.getStreet())); // Update street
-            rowData.set(4, Integer.toString(event.getSirens())); // Update sirens
+            // Verificar si el robotId ya existe en el archivo CSV
+            if (dataMap.containsKey(robotId)) {
+                // El robotId ya existe, actualiza los datos correspondientes
+                List<String> rowData = dataMap.get(robotId);
+                rowData.set(1, event.getTimeStamp().format(formatter)); // Update timestamp
+                rowData.set(2, Integer.toString(event.getAvenue())); // Update avenue
+                rowData.set(3, Integer.toString(event.getStreet())); // Update street
+                rowData.set(4, Integer.toString(event.getSirens())); // Update sirens
 
-            // Escribir la linea actualizada en el archivo CSV
-            writeDataToFile(tableName, dataMap);
-        } else {
-            // El robotId no existe, crea una nueva entrada en el archivo CSV
-            String newLine = robotId + "," +
-                    event.getTimeStamp().format(formatter) + "," +
-                    event.getAvenue() + "," +
-                    event.getStreet() + "," +
-                    event.getSirens();
-            appendLineToFile(tableName, newLine);
+                // Escribir la linea actualizada en el archivo CSV
+                writeDataToFile(tableName, dataMap);
+            } else {
+                // El robotId no existe, crea una nueva entrada en el archivo CSV
+                String newLine = robotId + "," +
+                        event.getTimeStamp().format(formatter) + "," +
+                        event.getAvenue() + "," +
+                        event.getStreet() + "," +
+                        event.getSirens();
+                appendLineToFile(tableName, newLine);
+            }
+        } finally {
+            eventLock.unlock();
         }
     }
 
