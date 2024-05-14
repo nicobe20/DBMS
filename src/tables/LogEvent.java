@@ -10,9 +10,8 @@ public class LogEvent {
     private int street;
     private int sirens;
 
-
     // Constructor
-    public LogEvent(int logId,int robotId, LocalDateTime timeStamp, int avenue, int street, int sirens) {
+    public LogEvent(int logId, int robotId, LocalDateTime timeStamp, int avenue, int street, int sirens) {
         this.logId = logId;
         this.robotId = robotId;
         this.timeStamp = timeStamp;
@@ -42,29 +41,41 @@ public class LogEvent {
         return sirens;
     }
 
-    public int getLogId(){
+    public int getLogId() {
         return logId;
     }
 
+    @Override
+    public String toString() {
+        return "LogEvent{" +
+                "logId=" + logId +
+                ", robotId=" + robotId +
+                ", timestamp='" + timeStamp + '\'' +
+                ", avenue=" + avenue +
+                ", street=" + street +
+                ", sirens=" + sirens +
+                '}';
+    }
+
     // Setters
-    
+
     // public void setRobotId(int robotId) {
-    //     this.robotId = robotId;
+    // this.robotId = robotId;
     // }
 
     // public void setTimeStamp(LocalDateTime timeStamp) {
-    //     this.timeStamp = timeStamp;
+    // this.timeStamp = timeStamp;
     // }
 
     // public void setAvenue(int avenue) {
-    //     this.avenue = avenue;
+    // this.avenue = avenue;
     // }
 
     // public void setStreet(int street) {
-    //     this.street = street;
+    // this.street = street;
     // }
 
     // public void setSirens(int sirens) {
-    //     this.sirens = sirens;
+    // this.sirens = sirens;
     // }
 }
