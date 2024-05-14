@@ -6,13 +6,18 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+//import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+//import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+//import com.opencsv.CSVReader;
+//import com.opencsv.exceptions.CsvException;
 
 import tables.LogEvent;
 
@@ -46,7 +51,9 @@ public class CSVEventHandler {
             int robotId = event.getRobotId();
 
             // El robotId no existe, crea una nueva entrada en el archivo CSV
-            String newLine = robotId + "," +
+            String newLine =
+                    //event.getLogId() + "," +
+                    robotId + "," +
                     event.getTimeStamp().format(formatter) + "," +
                     event.getAvenue() + "," +
                     event.getStreet() + "," +
@@ -141,5 +148,37 @@ public class CSVEventHandler {
         writer.write("robotId,timestamp,avenue,street,sirens\n"); // Escribir la primera linea con los encabezados
         writer.close();
     }
+    /* 
+    //Convertir de csv a lista
+    public Map<Integer, List<LogEvent>> getEvents(String filename) {
+        Map<Integer, List<LogEvent>> EventIndex = new HashMap<>();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        try (CSVReader reader = new CSVReader(new FileReader(filename))) {
+            List<String[]> rows = reader.readAll();
+            for (String[] row : rows.subList(1, rows.size())) { // Skip header row
+                int logId = Integer.parseInt(row[0]);
+                int robotId = Integer.parseInt(row[1]);
+                String timestampString = row[2];
+                LocalDateTime timestamp = LocalDateTime.parse(timestampString, formatter);
+                int avenue = Integer.parseInt(row[3]);
+                int street = Integer.parseInt(row[4]);
+                int sirens = Integer.parseInt(row[5]);
+                LogEvent logEvent = new LogEvent(logId, robotId, timestamp, avenue, street, sirens);
+
+                // Update index
+                if (!EventIndex.containsKey(logId)) {
+                    EventIndex.put(logId, new ArrayList<>());
+                }
+                EventIndex.get(logId).add(logEvent);
+            }
+        } catch (IOException | CsvException e) {
+            e.printStackTrace();
+        }
+
+        return EventIndex;
+    }
+    */
 
 }

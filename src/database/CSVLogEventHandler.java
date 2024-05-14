@@ -57,6 +57,7 @@ public class CSVLogEventHandler {
         }
     }
 
+    //Convertir de csv a lista
     public Map<Integer, List<LogEvent>> getLogEvents(String filename) {
         Map<Integer, List<LogEvent>> logEventIndex = new HashMap<>();
 
@@ -86,4 +87,5 @@ public class CSVLogEventHandler {
 
         return logEventIndex;
     }
+
 }

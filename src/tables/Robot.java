@@ -38,6 +38,17 @@ public class Robot {
         return robotTypeString;
     }
 
+    @Override
+    public String toString() {
+        return "Robot{" +
+                ", robotId=" + robotId +
+                ", RobotType='" + robotType + '\'' +
+                ", isTurnedOn=" + isTurnedOn +
+                ", Color=" + color +
+                ", RobotType=" + robotTypeString +
+                '}';
+    }
+
     // Setters
     // public void setRobotType(int robotType) {
     // this.robotType = robotType;
