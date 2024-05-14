@@ -1,6 +1,7 @@
 package database;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
@@ -16,6 +17,13 @@ public class CSVProgramStatusHandler {
         // Abrir el archivo en modo append para no sobrescribir los datos existentes
         FileWriter fileWriter = new FileWriter(tableName, true);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+        File file = new File(tableName);
+        if (file.length() == 0) {
+            // Si el archivo esta vacio, escribir los nombres de los campos como encabezados
+            bufferedWriter.write("programStatus, state");
+            bufferedWriter.newLine();
+        }
 
         // Formatear los datos del estado del programa en una linea de texto CSV
         String line = programStatus.getTimeStamp().format(formatter) + "," +

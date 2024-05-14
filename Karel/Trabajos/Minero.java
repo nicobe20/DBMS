@@ -176,39 +176,42 @@ public class Minero extends AugmentedRobot implements Directions {
 	}
 
 	private static void connectionWithDbServer(String dataJsonString, String queryType, String tableName,
-            String filterField,
-            Integer filterValue) {
-        try {
-            Socket socket = new Socket("localhost", 12345);
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
- 
-            String jsonMessage = "{"
-                    + "\"queryType\":" + queryType + ","
-                    + "\"tableName\":" + tableName + ","
-                    + "\"filterField\":" + filterField + ","
-                    + "\"filterValue\":" + filterValue + ","
-                    + "\"data\": " + dataJsonString
-                    + "}";
- 
-            // Message for dbServer
-            out.println(jsonMessage);
- 
-            // Leer respuesta del servidor
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            String response = in.readLine();
-            System.out.println("Response from server: " + response);
- 
-            socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+			String filterField,
+			Integer filterValue) {
+		try {
+			Socket socket = new Socket("localhost", 12345);
+			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
-	private void generateProgramStatus(String programStatus) {
+			String jsonMessage = "{"
+					+ "\"queryType\":" + queryType + ","
+					+ "\"tableName\":" + tableName + ","
+					+ "\"filterField\":" + filterField + ","
+					+ "\"filterValue\":" + filterValue + ","
+					+ "\"data\": " + dataJsonString
+					+ "}";
+
+			// Message for dbServer
+			out.println(jsonMessage);
+
+			// Leer respuesta del servidor
+			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			String response = in.readLine();
+			System.out.println("Response from server: " + response);
+
+			socket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void generateProgramStatus(String programStatus) {
 		String jsonRobot = "{"
 				+ "\"tableName\":\"" + PROGRAM_STATUS_TABLE + "\","
 				+ "\"programStatus\":" + programStatus + ","
 				+ "}";
+
+		connectionWithDbServer(jsonRobot, "POST", PROGRAM_STATUS_TABLE, null, null);
+
 	}
 
 	private void generateEventLogs() {
@@ -1001,6 +1004,8 @@ public class Minero extends AugmentedRobot implements Directions {
 		crearRobots(TIPO_MINERO);
 		crearRobots(TIPO_TREN);
 		crearRobots(TIPO_EXTRACTOR);
+
+		generateProgramStatus("ENCENDIDO");
 
 		// Initialize the threads
 		for (int i = 0; i < objThreads.size(); i++)

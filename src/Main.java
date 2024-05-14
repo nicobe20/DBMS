@@ -11,6 +11,7 @@ public class Main {
         cleanTable.cleanTable(Constants.DEFAULT_ROBOT_TABLE_NAME);
         cleanTable.cleanTable(Constants.DEFAULT_EVENT_TABLE_NAME);
         cleanTable.cleanTable(Constants.DEFAULT_LOG_EVENT_TABLE_NAME);
+        cleanTable.cleanTable(Constants.DEFAULT_PROGRAM_STATUS_TABLE_NAME);
 
         DbServer dbServer = new DbServer(12345);
         dbServer.start();
