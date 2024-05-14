@@ -27,12 +27,15 @@ public class CSVLogEventHandler {
             File file = new File(tableName);
             if (file.length() == 0) {
                 // Si el archivo esta vacio, escribir los nombres de los campos como encabezados
-                bufferedWriter.write("robotId,timeStamp,avenue,street,sirens");
+                bufferedWriter.write("LogId,robotId,timeStamp,avenue,street,sirens");
                 bufferedWriter.newLine();
             }
 
             // Formatear los datos del evento en una linea de texto CSV
-            String line = event.getRobotId() + "," +
+            String line = 
+                    event.getLogId() + ","+
+                    event.getLogId()+ ","+
+                    event.getRobotId() + "," +
                     event.getTimeStamp().format(formatter) + "," +
                     event.getAvenue() + "," +
                     event.getStreet() + "," +

@@ -1,9 +1,12 @@
 package requestHandlers;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.json.JSONObject;
-
 import constants.Constants;
 import database.CSVEventHandler;
 import database.CSVLogEventHandler;
@@ -14,9 +17,30 @@ import utils.LogEventFactory;
 import utils.RobotFactory;
 
 public class RequestHandlers {
-    public void handleGet(JSONObject jsonString) {
 
+    public void handleGet(JSONObject jsonString, Map<Integer, List<LogEvent>> logEventIndex, PrintWriter out) {
+    String tableName = jsonString.getString("tableName");
+    int logId = jsonString.optInt("logId", -1); // Get the requested LogId, default to -1 if not provided
+
+    if (tableName.equals(Constants.DEFAULT_LOG_EVENT_TABLE_NAME)) {
+        if (logId != -1) {
+            // Retrieve data for a specific LogId
+            List<LogEvent> logEvents = logEventIndex.getOrDefault(logId, new ArrayList<>());
+            for (LogEvent event : logEvents) {
+                out.println(event.toString()); // Send the LogEvent data to the client
+            }
+        } else {
+            // Retrieve data for all LogIds
+            for (List<LogEvent> events : logEventIndex.values()) {
+                for (LogEvent event : events) {
+                    out.println(event.toString()); 
+                }
+            }
+        }
+    } else {
+        out.println("Invalid table name");
     }
+}
 
     public void handlePost(JSONObject jsonObject) {
         String tableName = jsonObject.getString("tableName");

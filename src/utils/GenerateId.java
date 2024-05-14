@@ -19,7 +19,7 @@ public class GenerateId {
                 while ((line = bufferedReader.readLine()) != null) {
                     if (firstLine) {
                         firstLine = false;
-                        continue; // Saltar la primera linea y continuar con la siguiente
+                        continue; // Saltar la primera linea y continua con la siguiente
                     }
                     String[] data = line.split(",");
                     lastId = Integer.parseInt(data[0]); // Suponiendo que el ID esta en la primera posicion

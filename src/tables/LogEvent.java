@@ -3,14 +3,17 @@ package tables;
 import java.time.LocalDateTime;
 
 public class LogEvent {
+    private int logId;
     private int robotId;
     private LocalDateTime timeStamp;
     private int avenue;
     private int street;
     private int sirens;
 
+
     // Constructor
-    public LogEvent(int robotId, LocalDateTime timeStamp, int avenue, int street, int sirens) {
+    public LogEvent(int logId,int robotId, LocalDateTime timeStamp, int avenue, int street, int sirens) {
+        this.logId = logId;
         this.robotId = robotId;
         this.timeStamp = timeStamp;
         this.avenue = avenue;
@@ -39,6 +42,10 @@ public class LogEvent {
         return sirens;
     }
 
+    public int getLogId(){
+        return logId;
+    }
+
     // Setters
     
     // public void setRobotId(int robotId) {
@@ -61,4 +68,3 @@ public class LogEvent {
     //     this.sirens = sirens;
     // }
 }
-
