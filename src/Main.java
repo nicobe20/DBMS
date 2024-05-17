@@ -17,9 +17,3 @@ public class Main {
         dbServer.start();
     }
 }
-
-// Verificar que la tabla padre tenga los ids creados.
-// Indexation y queries.
-// Indexation always by id.
-
-// USE TABLE events.csv;

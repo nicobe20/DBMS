@@ -62,7 +62,7 @@ public class DbServer {
                 } else if (queryType.equals("POST")) {
                     response = requestHandlers.handlePost(jsonObject);
                 } else if (queryType.equals("PUT")) {
-                    requestHandlers.handlePut(jsonObject);
+                    response = requestHandlers.handlePut(jsonObject);
                 }
 
                 // Enviamos la respuesta al cliente

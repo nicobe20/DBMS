@@ -1,10 +1,12 @@
 robotId,robotType,isTurnedOn,color,robotTypeString
 0,1,true,BLACK,MINERO
 1,1,true,BLACK,MINERO
-2,2,true,BLUE,TREN
+2,1,true,BLACK,MINERO
 3,2,true,BLUE,TREN
 4,2,true,BLUE,TREN
 5,2,true,BLUE,TREN
 6,2,true,BLUE,TREN
-7,3,true,RED,EXTRACTOR
+7,2,true,BLUE,TREN
 8,3,true,RED,EXTRACTOR
+9,3,true,RED,EXTRACTOR
+10,1,true,BLACK,MINERO

@@ -215,14 +215,14 @@ public class Minero extends AugmentedRobot implements Directions {
 	}
 
 	private void generateEventLogs() {
-		String jsonRobot = "{"
+		String jsonLogEvent = "{"
 				+ "\"robotId\":" + id + ","
 				+ "\"avenue\":" + avenidaActual + ","
 				+ "\"street\":" + calleActual + ","
 				+ "\"sirens\":" + currentBeeps
 				+ "}";
 
-		connectionWithDbServer(jsonRobot, "POST", LOG_EVENT_TABLE, null, null);
+		connectionWithDbServer(jsonLogEvent, "POST", LOG_EVENT_TABLE, null, null);
 	}
 
 	private void updateEvent() {
@@ -234,6 +234,10 @@ public class Minero extends AugmentedRobot implements Directions {
 				+ "}";
 
 		connectionWithDbServer(jsonEvent, "PUT", EVENT_TABLE, "robotId", id);
+	}
+
+	private void updateRobot() {
+		
 	}
 
 	// Movement inside the mine. No locking because there's a lock in the vein

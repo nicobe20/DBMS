@@ -1,0 +1,12 @@
+- logEvents.csv:  Verificar que robotId exista en el archivo robots.csv antes de insertar. Retornar error al cliente en caso de que robotId no exista en robots.csv
+
+- events.csv: Verificar que robotId exista en el archivo robots.csv antes de insertar. Retornar error al cliente en caso de que robotId no exista en robots.csv
+
+- events.csv: No permitir dos campos con el mismo robotId. Retornar error de que ya existe un campo por este id
+
+- En el momento que los robots se esten apagando uno uno (Cuando los robots salgan de la mina y se apaguen en karel robot) el campo "isTurnedOn" del archivo robots.csv debe pasar a false. Nota 1: en Minero.java en la linea 239 hay una funcion llamada "updateRobot" en la cual se debe seguir una logica similar a  "updateEvent" pero en este caso con los campos de un robot, Esta funcion debe ser llamada cada vez que un robot se apague, enviando a dbServer el "robotId" con la demas informacion para actualizar el robot por "robotId". Nota 2: en la clase "RequestHandlers.java" hay una funcion llamada "handlePut". En esta funcion donde dice "// Agregar logica para actualizar archivo robots.csv", dentro de un else if (Seguir recomendaciones dadas).
+
+- Al finalizar el programa karel robot (Cuando todos los robots se apaguen) se debe actualizar el archivo "programStatus.csv" para que el campo "status" de este archivo pase de "Encendido" a "Apagado". Es decir, se debe hacer un update. siguiendo la misma logica que el punto anterior pero para "programStatus.csv"
+
+
+En en archivo src/example/main.java pueden hacer las pruebas necesarias. Despues de realizar pruebas en este archivo, Asegurarse de que quede totalmente igual al commit "added example folder to make individual requests to dbServer"

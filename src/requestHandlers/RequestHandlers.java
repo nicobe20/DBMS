@@ -24,7 +24,6 @@ public class RequestHandlers {
         // new handlers
         CSVLogEventHandler CSVLogEventHandler = new CSVLogEventHandler();
         CSVRobotHandler CSVRobotHandler = new CSVRobotHandler();
-        // CSVEventHandler CSVEventHandler = new CSVEventHandler();
         // Filters
         String tableName = jsonString.getString("tableName");
         int filterValue = jsonString.optInt("filterValue", -1);
@@ -32,10 +31,7 @@ public class RequestHandlers {
         Map<Integer, List<LogEvent>> logEventIndex = CSVLogEventHandler
                 .getLogEvents(Constants.DEFAULT_LOG_EVENT_TABLE_NAME);
         Map<Integer, List<Robot>> ListRobotItems = CSVRobotHandler.getRobotItems(Constants.DEFAULT_ROBOT_TABLE_NAME);
-        // Map<Integer, List<LogEvent>> EventIndex =
-        // CSVEventHandler.getEvents(Constants.DEFAULT_EVENT_TABLE_NAME);
 
-        // Log events todo esto.
         if (tableName.equals(Constants.DEFAULT_LOG_EVENT_TABLE_NAME)) {
             if (filterValue != -1) {
                 // Retrieve data for a specific LogId
@@ -64,14 +60,10 @@ public class RequestHandlers {
                 }
 
                 String jsonString2 = jsonArray.toString();
-                System.out.println(jsonString2);
                 return jsonString2;
 
             }
-        }
-
-        // Robot todo esto.
-        else if (tableName.equals(Constants.DEFAULT_ROBOT_TABLE_NAME)) {
+        } else if (tableName.equals(Constants.DEFAULT_ROBOT_TABLE_NAME)) {
             if (filterValue != -1) {
                 // Retrieve data for a specific LogId
                 List<Robot> robot = ListRobotItems.getOrDefault(filterValue, new ArrayList<>());
@@ -79,65 +71,22 @@ public class RequestHandlers {
                     return rot.toString();
                 }
             } else {
-                // aqui esta todo el manejo del json
                 JSONArray jsonArray = new JSONArray();
-                // Retrieve data for all LogIds
                 for (Map.Entry<Integer, List<Robot>> entry : ListRobotItems.entrySet()) {
-                    // Iterar sobre la lista de LogEvent
                     for (Robot rot : entry.getValue()) {
-                        // Crear un JSONObject para cada LogEvent
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("robotId", rot.getRobotId());
                         jsonObject.put("robotType", rot.getRobotType());
                         jsonObject.put("isTurnedOn", rot.isTurnedOn());
                         jsonObject.put("color", rot.getColor());
                         jsonObject.put("robotTypeString", rot.getRobotTypeString());
-                        // Agregar el JSONObject al JSONArray
                         jsonArray.put(jsonObject);
                     }
                 }
 
                 String jsonString2 = jsonArray.toString();
-                System.out.println(jsonString2);
                 return jsonString2;
-
             }
-            // Event aqui
-            /*
-             * }else if(tableName.equals(Constants.DEFAULT_EVENT_TABLE_NAME)){
-             * if (filterValue != -1) {
-             * // Retrieve data for a specific LogId
-             * List<LogEvent> Events = EventIndex.getOrDefault(filterValue, new
-             * ArrayList<>());
-             * for (LogEvent event : Events) {
-             * return event.toString();
-             * }
-             * } else {
-             * //aqui esta todo el manejo del json
-             * JSONArray jsonArray = new JSONArray();
-             * // Retrieve data for all LogIds
-             * for (Map.Entry<Integer, List<LogEvent>> entry : logEventIndex.entrySet()) {
-             * // Iterar sobre la lista de LogEvent
-             * for (LogEvent event : entry.getValue()) {
-             * // Crear un JSONObject para cada LogEvent
-             * JSONObject jsonObject = new JSONObject();
-             * jsonObject.put("logId", event.getLogId());
-             * jsonObject.put("robotId", event.getRobotId());
-             * jsonObject.put("timestamp", event.getTimeStamp().toString());
-             * jsonObject.put("avenue", event.getAvenue());
-             * jsonObject.put("street", event.getStreet());
-             * jsonObject.put("sirens", event.getSirens());
-             * // Agregar el JSONObject al JSONArray
-             * jsonArray.put(jsonObject);
-             * }
-             * }
-             * 
-             * String jsonString2 = jsonArray.toString();
-             * System.out.println(jsonString2);
-             * return jsonString2;
-             * 
-             * }
-             */
         }
 
         return "Error: Se ha producido un error inesperado";
@@ -195,20 +144,32 @@ public class RequestHandlers {
         return "Error: Table name not recognized.";
     }
 
-    public void handlePut(JSONObject jsonObject) {
+    public String handlePut(JSONObject jsonObject) {
         String tableName = jsonObject.getString("tableName");
         JSONObject data = jsonObject.getJSONObject("data");
 
         if (tableName.equals(Constants.DEFAULT_EVENT_TABLE_NAME)) {
+            // Logica para actualizar un evento
+
             LogEvent event = LogEventFactory.createRobotFromJson(data);
             CSVEventHandler CSVEventHandler = new CSVEventHandler();
 
             try {
                 CSVEventHandler.updateEvent(event, tableName);
-                // System.out.println("Robot successfully saved to CSV file.");
+                return "Event successfully updated to CSV file.";
             } catch (IOException e) {
-                System.out.println("Error saving robot: " + e.getMessage());
+                return "Error updating event";
             }
+        } else if (tableName.equals(Constants.DEFAULT_ROBOT_TABLE_NAME)) {
+            // Agregar logica para actualizar archivo robots.csv
+
+            // Para esto se debe utilizar una logica similar a la anterior donde dice
+            // "Logica para actualizar un evento". la idea es crear una funcion en
+            // "CSVRobotHandler.java" llamada updateRobot la cual maneje la logica para
+            // actualizar un robot por "robotId"
         }
+
+        return "Error: Table name not recognized or this table cannot be updated";
+
     }
 }
